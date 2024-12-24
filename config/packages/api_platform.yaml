@@ -1,0 +1,9 @@
+api_platform:
+    title: 'API Documentation'
+    description: 'Dokumentacja Twojego API'
+    version: '1.0.0'
+    swagger:
+        versions:
+            - '3'  # Określenie wersji Swaggera (3 to domyślna wersja dla API Platform)
+        swagger_ui_extra_configuration:
+            displayOperationId: true  # Dodatkowe opcje konfiguracyjne dla Swagger UI

@@ -1,0 +1,49 @@
+services:
+    php:
+        build: ./docker/php
+        container_name: php
+        volumes:
+            - ./:/app
+            - './docker/php/conf.d:/usr/local/etc/php/conf.d'
+            - 'php_composer_data:/root/.composer'
+        networks:
+            - network
+        depends_on:
+            - db
+        entrypoint: ["sh", "-c", "sleep 10 && composer install && php bin/console doctrine:migrations:migrate --no-interaction && php-fpm"]
+        environment:
+            DATABASE_URL: mysql://root:root@db:3306/symfony
+
+    www:
+        build: ./docker/www
+        container_name: www
+        ports:
+            - 80:80
+        volumes:
+            - ./:/app
+            - ./docker/www/conf.d:/etc/nginx/conf.d
+        networks:
+            - network
+        depends_on:
+            - php
+
+    db:
+        image: "mariadb:latest"
+        volumes:
+            - db_maria_data:/var/lib/mysql
+        networks:
+            - network
+        ports:
+            - 3306:3306
+        environment:
+            - TZ=UTC
+            - MYSQL_ROOT_PASSWORD=root         
+            - MYSQL_DATABASE=symfony
+
+volumes:
+    db_data:
+    db_maria_data:
+    php_composer_data:
+
+networks:
+    network: null
